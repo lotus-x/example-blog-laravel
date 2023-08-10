@@ -80,11 +80,14 @@ class UserController extends Controller
 
     public function login(UserLoginRequest $request)
     {
+        // validate the request
         $request->validated();
 
+        // extract data from the request
         $email=$request->string('email')->trim();
         $password=$request->string('password')->trim();
 
+        // authenticate the user
         if (Auth::attempt(['email'=>$email,'password'=>$password])) {
             $request->session()->regenerate();
 
@@ -98,14 +101,18 @@ class UserController extends Controller
 
     public function register(UserRegisterRequest $request)
     {
+        // validate the request
         $request->validated();
 
+        // create a new user
         $user=new User();
 
+        // set user field values
         $user->name=$request->input('name');
         $user->email=$request->input('email');
         $user->password=$request->input('password');
 
+        // save user
         $user->save();
 
         return redirect()->route("login-view");
@@ -113,8 +120,10 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
+        // log out user
         Auth::logout();
 
+        // invalidate session
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
