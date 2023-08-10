@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -87,7 +88,7 @@ class UserController extends Controller
         if (Auth::attempt(['email'=>$email,'password'=>$password])) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('articles'));
+            return redirect()->intended(route('articles.index'));
         }
 
         return back()->withErrors([
@@ -108,5 +109,16 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route("login-view");
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login-view');
     }
 }
