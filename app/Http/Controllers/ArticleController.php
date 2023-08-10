@@ -94,8 +94,12 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Article $article)
+    public function show(Request $request, Article $article)
     {
+        if ($request->user()->cannot('view', $article)) {
+            abort(403);
+        }
+
         $tag_names="";
 
         foreach($article->tags as $key=>$tag) {
@@ -114,8 +118,12 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Article $article)
+    public function edit(Request $request, Article $article)
     {
+        if ($request->user()->cannot('update', $article)) {
+            abort(403);
+        }
+
         $tag_names="";
 
         foreach($article->tags as $key=>$tag) {
@@ -136,6 +144,10 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
+        if ($request->user()->cannot('update', $article)) {
+            abort(403);
+        }
+
         $request->validated();
 
         $title=$request->string('title')->trim();
@@ -165,8 +177,12 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Article $article)
+    public function destroy(Request $request, Article $article)
     {
+        if ($request->user()->cannot('delete', $article)) {
+            abort(403);
+        }
+
         // detach tags
         $article->tags()->detach();
         // delete the article
